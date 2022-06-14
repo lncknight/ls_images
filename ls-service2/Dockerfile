@@ -20,9 +20,9 @@ RUN pm2 set pm2-logrotate:max_size 100m \
 
 COPY startup.sh /usr/src/app/docker/startup.sh 
 
-COPY data /tmp/data
+COPY ./data /tmp/data
 RUN cd /tmp/data \
-    && cat tmp.tar.gz \
+    && cat x* > tmp.tar.gz \
     && tar xvf tmp.tar.gz \
     && mv GeoLite2-City_20220610/GeoLite2-City.mmdb ..
 
