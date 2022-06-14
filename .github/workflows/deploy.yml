@@ -9,16 +9,18 @@ on:
       - '*'
 
 env:
-  IMAGE_NAME: 'tmp'
+  IMAGE_NAME: 'whatever'
 
 jobs:
 
-  image:
-    
+  ls-service2:
+    env:
+      IMAGE_NAME: 'ls-service2'
+
     timeout-minutes: 10
 
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && (contains(github.event.head_commit.message, 'ls-service2'))
+    if: github.event_name == 'push' && (contains(github.event.head_commit.message, $IMAGE_NAME))
 
     steps:
       - uses: actions/checkout@v2
@@ -37,7 +39,7 @@ jobs:
       #   uses: lhotari/action-upterm@v1
 
       - name: Build image
-        run: docker buildx build ls-service2 --tag $IMAGE_NAME
+        run: docker buildx build $IMAGE_NAME --tag tmp
 
       # - name: Log into registry
       #   run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
@@ -51,7 +53,7 @@ jobs:
 
       - name: Push image
         run: |
-          IMAGE_ID=lncknight/ls-service2
+          IMAGE_ID=lncknight/$IMAGE_NAME
 
           # Strip git ref prefix from version
           VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
@@ -67,5 +69,5 @@ jobs:
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
 
-          docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+          docker tag tmp $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
