@@ -11,7 +11,7 @@ RUN apk update && apk add tzdata \
 
 RUN apk update && apk add bash openssh rsync imagemagick
 
-RUN npm config set unsafe-perm true
+# RUN npm config set unsafe-perm true
 
 RUN npm -g i pm2 pm2-logrotate
 
@@ -24,7 +24,8 @@ COPY ./data /tmp/data
 RUN cd /tmp/data \
     && cat x* > tmp.tar.gz \
     && tar xvf tmp.tar.gz \
-    && mv GeoLite2-City_20220610/GeoLite2-City.mmdb ..
+    && mv GeoLite2-City_20220610/GeoLite2-City.mmdb .. \
+    && rm -rf *
 
 EXPOSE 3000
 
