@@ -18,7 +18,12 @@ RUN npm -g i pm2 pm2-logrotate
 RUN pm2 set pm2-logrotate:max_size 100m \
     && pm2 save
 
-COPY data/GeoLite2-City.mmdb /tmp/GeoLite2-City.mmdb
+COPY data /tmp/data
+RUN cd /tmp/data \
+    && cat tmp.tar.gz \
+    && tar xvf tmp.tar.gz \
+    && mv GeoLite2-City_20220610/GeoLite2-City.mmdb ..
+
 COPY startup.sh /usr/src/app/docker/startup.sh 
 
 EXPOSE 3000
