@@ -21,7 +21,7 @@ jobs:
     timeout-minutes: 10
 
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && (contains(github.event.head_commit.message, env.IMAGE_NAME))
+    if: github.event_name == 'push' && (contains(github.event.head_commit.message, $IMAGE_NAME))
 
     steps:
       # - name: debug
@@ -83,7 +83,7 @@ jobs:
     timeout-minutes: 10
 
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && (contains(github.event.head_commit.message, env.IMAGE_NAME))
+    if: github.event_name == 'push' && (contains(github.event.head_commit.message, $IMAGE_NAME))
 
     steps:
       - uses: actions/checkout@v2
@@ -137,7 +137,7 @@ jobs:
     timeout-minutes: 10
 
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && (contains(github.event.head_commit.message, env.IMAGE_NAME))
+    if: github.event_name == 'push' && (contains(github.event.head_commit.message, $IMAGE_NAME))
 
     steps:
       - uses: actions/checkout@v2
