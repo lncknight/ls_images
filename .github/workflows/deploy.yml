@@ -30,6 +30,7 @@ jobs:
           echo '----------1'
           echo "${{ env.IMAGE_NAME }}"
           echo '----------2'
+          echo $IMAGE_NAME
 
 
       - uses: actions/checkout@v2
