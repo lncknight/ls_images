@@ -13,6 +13,60 @@ env:
 
 jobs:
 
+  ls-api:
+    env:
+      IMAGE_NAME: 'ls-api'
+
+    ######### common #########
+    timeout-minutes: 10
+
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (contains(github.event.head_commit.message, github.env.IMAGE_NAME))
+
+    steps:
+      - uses: actions/checkout@v2
+
+      # ref: https://github.com/docker/build-push-action/blob/master/docs/advanced/cache.md
+      # ref: https://evilmartians.com/chronicles/build-images-on-github-actions-with-docker-layer-caching
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Build image
+        run: docker buildx build $IMAGE_NAME --tag tmp
+
+      -
+        name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Push image
+        run: |
+          IMAGE_ID=lncknight/$IMAGE_NAME
+
+          # Strip git ref prefix from version
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+
+          # Strip "v" prefix from tag name
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+
+          # Use Docker `latest` tag convention
+          [ "$VERSION" == "main" ] && VERSION=$(date +"%Y%m%d")
+          # [ "$VERSION" == "main" ] && VERSION=latest
+
+          VERSION=$VERSION
+          echo IMAGE_ID=$IMAGE_ID
+          echo VERSION=$VERSION
+
+          docker tag tmp $IMAGE_ID:$VERSION
+          docker push $IMAGE_ID:$VERSION
+
   ls-service2:
     env:
       IMAGE_NAME: 'ls-service2'
