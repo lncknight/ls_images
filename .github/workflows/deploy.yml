@@ -21,7 +21,7 @@ jobs:
     timeout-minutes: 10
 
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && contains(github.event.head_commit.message, env.IMAGE_NAME)
+    if: github.event_name == 'push' && contains(github.event.head_commit.message, 'ls-api')
 
     steps:
       - name: debug
@@ -84,7 +84,7 @@ jobs:
     timeout-minutes: 10
 
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && contains(github.event.head_commit.message, github.env.IMAGE_NAME)
+    if: github.event_name == 'push' && contains(github.event.head_commit.message, 'ls-service2')
 
     steps:
       - uses: actions/checkout@v2
@@ -138,7 +138,7 @@ jobs:
     timeout-minutes: 10
 
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && contains(github.event.head_commit.message, github.env.IMAGE_NAME)
+    if: github.event_name == 'push' && contains(github.event.head_commit.message, 'ls-web-v2')
 
     steps:
       - uses: actions/checkout@v2
