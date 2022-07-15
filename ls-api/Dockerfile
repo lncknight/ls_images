@@ -6,8 +6,8 @@ FROM surnet/alpine-wkhtmltopdf:3.10-0.12.5-full as wkhtmltopdf
 # FROM surnet/alpine-wkhtmltopdf:3.9-0.12.5-full as wkhtmltopdf
 
 # FROM richarvey/nginx-php-fpm:1.10.4 # nginx error
-FROM richarvey/nginx-php-fpm:1.9.1
-# FROM richarvey/nginx-php-fpm:1.8.2 # worked
+# FROM richarvey/nginx-php-fpm:1.9.1
+FROM richarvey/nginx-php-fpm:1.8.2 # worked
 
 LABEL maintainer="Lawrence Lau <lncknight@gmail.com>"
 
