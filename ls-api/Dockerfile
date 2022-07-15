@@ -5,7 +5,8 @@ FROM surnet/alpine-wkhtmltopdf:3.10-0.12.5-full as wkhtmltopdf
 # FROM test as wkhtmltopdf
 # FROM surnet/alpine-wkhtmltopdf:3.9-0.12.5-full as wkhtmltopdf
 
-FROM php:7.3.8-fpm-alpine3.9
+FROM php:7.4.10-fpm-alpine
+
 
 LABEL maintainer="Lawrence Lau <lncknight@gmail.com>"
 
@@ -13,24 +14,29 @@ ENV php_conf /usr/local/etc/php-fpm.conf
 ENV fpm_conf /usr/local/etc/php-fpm.d/www.conf
 ENV php_vars /usr/local/etc/php/conf.d/docker-vars.ini
 
-ENV NGINX_VERSION 1.16.0
-ENV LUA_MODULE_VERSION 0.10.14
-ENV DEVEL_KIT_MODULE_VERSION 0.3.0
+ENV NGINX_VERSION 1.18.0
+ENV LUA_MODULE_VERSION 0.10.17
+ENV DEVEL_KIT_MODULE_VERSION 0.3.1
+ENV GEOIP2_MODULE_VERSION 3.2
 ENV LUAJIT_LIB=/usr/lib
 ENV LUAJIT_INC=/usr/include/luajit-2.1
 
 
 
+# ref: https://github.com/docker-library/php/issues/1121#issuecomment-878122705
+# RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.13/community/ gnu-libiconv=1.15-r3
 
-RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.13/community/ gnu-libiconv=1.15-r3
+# ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 
-ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
-
-# resolves #166
+# resolves #166 - not working
 # ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 # # RUN apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/community gnu-libiconv
 # # ref https://github.com/docker-library/php/issues/1121#issuecomment-771008395
 # RUN apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/community gnu-libiconv=1.15-r3
+
+# resolves #166
+ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
+RUN apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/community gnu-libiconv
 
 RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
   && CONFIG="\
@@ -64,14 +70,14 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
     --with-http_auth_request_module \
     --with-http_xslt_module=dynamic \
     --with-http_image_filter_module=dynamic \
-    --with-http_geoip_module=dynamic \
+#    --with-http_geoip_module=dynamic \
     --with-http_perl_module=dynamic \
     --with-threads \
     --with-stream \
     --with-stream_ssl_module \
     --with-stream_ssl_preread_module \
     --with-stream_realip_module \
-    --with-stream_geoip_module=dynamic \
+#    --with-stream_geoip_module=dynamic \
     --with-http_slice_module \
     --with-mail \
     --with-mail_ssl_module \
@@ -80,6 +86,7 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
     --with-http_v2_module \
     --add-module=/usr/src/ngx_devel_kit-$DEVEL_KIT_MODULE_VERSION \
     --add-module=/usr/src/lua-nginx-module-$LUA_MODULE_VERSION \
+#    --add-module=/usr/src/ngx_http_geoip2_module-$GEOIP2_MODULE_VERSION \
   " \
   && addgroup -S nginx \
   && adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx \ 
@@ -96,13 +103,15 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
     gnupg \
     libxslt-dev \
     gd-dev \
-    geoip-dev \
+ #   geoip-dev \
+    libmaxminddb-dev \
     perl-dev \
     luajit-dev \
   && curl -fSL http://nginx.org/download/nginx-$NGINX_VERSION.tar.gz -o nginx.tar.gz \
   && curl -fSL http://nginx.org/download/nginx-$NGINX_VERSION.tar.gz.asc  -o nginx.tar.gz.asc \
   && curl -fSL https://github.com/simpl/ngx_devel_kit/archive/v$DEVEL_KIT_MODULE_VERSION.tar.gz -o ndk.tar.gz \
   && curl -fSL https://github.com/openresty/lua-nginx-module/archive/v$LUA_MODULE_VERSION.tar.gz -o lua.tar.gz \
+#  && curl -fSL https://github.com/leev/ngx_http_geoip2_module/archive/$GEOIP2_MODULE_VERSION.tar.gz -o ngx_http_geoip2_module.tar.gz \
   && export GNUPGHOME="$(mktemp -d)" \
   && found=''; \
   for server in \
@@ -121,16 +130,17 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
   && tar -zxC /usr/src -f nginx.tar.gz \
   && tar -zxC /usr/src -f ndk.tar.gz \
   && tar -zxC /usr/src -f lua.tar.gz \
-  && rm nginx.tar.gz ndk.tar.gz lua.tar.gz \ 
+#  && tar -zxC /usr/src -f ngx_http_geoip2_module.tar.gz \
+#  && rm nginx.tar.gz ndk.tar.gz lua.tar.gz ngx_http_geoip2_module.tar.gz \ 
   && cd /usr/src/nginx-$NGINX_VERSION \
   && ./configure $CONFIG --with-debug \
   && make -j$(getconf _NPROCESSORS_ONLN) \
   && mv objs/nginx objs/nginx-debug \
   && mv objs/ngx_http_xslt_filter_module.so objs/ngx_http_xslt_filter_module-debug.so \
   && mv objs/ngx_http_image_filter_module.so objs/ngx_http_image_filter_module-debug.so \
-  && mv objs/ngx_http_geoip_module.so objs/ngx_http_geoip_module-debug.so \
+#  && mv objs/ngx_http_geoip_module.so objs/ngx_http_geoip_module-debug.so \
   && mv objs/ngx_http_perl_module.so objs/ngx_http_perl_module-debug.so \
-  && mv objs/ngx_stream_geoip_module.so objs/ngx_stream_geoip_module-debug.so \
+#  && mv objs/ngx_stream_geoip_module.so objs/ngx_stream_geoip_module-debug.so \
   && ./configure $CONFIG \
   && make -j$(getconf _NPROCESSORS_ONLN) \
   && make install \
@@ -142,13 +152,14 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
   && install -m755 objs/nginx-debug /usr/sbin/nginx-debug \
   && install -m755 objs/ngx_http_xslt_filter_module-debug.so /usr/lib/nginx/modules/ngx_http_xslt_filter_module-debug.so \
   && install -m755 objs/ngx_http_image_filter_module-debug.so /usr/lib/nginx/modules/ngx_http_image_filter_module-debug.so \
-  && install -m755 objs/ngx_http_geoip_module-debug.so /usr/lib/nginx/modules/ngx_http_geoip_module-debug.so \
+#  && install -m755 objs/ngx_http_geoip_module-debug.so /usr/lib/nginx/modules/ngx_http_geoip_module-debug.so \
   && install -m755 objs/ngx_http_perl_module-debug.so /usr/lib/nginx/modules/ngx_http_perl_module-debug.so \
-  && install -m755 objs/ngx_stream_geoip_module-debug.so /usr/lib/nginx/modules/ngx_stream_geoip_module-debug.so \
+#  && install -m755 objs/ngx_stream_geoip_module-debug.so /usr/lib/nginx/modules/ngx_stream_geoip_module-debug.so \
   && ln -s ../../usr/lib/nginx/modules /etc/nginx/modules \
   && strip /usr/sbin/nginx* \
   && strip /usr/lib/nginx/modules/*.so \
   && rm -rf /usr/src/nginx-$NGINX_VERSION \
+#  && rm -rf /usr/src/ngx_http_geoip2_module-$GEOIP2_MODULE_VERSION \
   \
   # Bring in gettext so we can get `envsubst`, then throw
   # the rest away. To do this, we need to install `gettext`
@@ -188,9 +199,9 @@ RUN echo @testing http://nl.alpinelinux.org/alpine/edge/testing >> /etc/apk/repo
     imap-dev \
     openssl-dev \
     git \
-    python \
-    python-dev \
-    py-pip \
+    python3 \
+    python3-dev \
+    py3-pip \
     augeas-dev \
     libressl-dev \
     ca-certificates \
@@ -211,14 +222,12 @@ RUN echo @testing http://nl.alpinelinux.org/alpine/edge/testing >> /etc/apk/repo
     libjpeg-turbo-dev \
     postgresql-dev && \
     docker-php-ext-configure gd \
-      --with-gd \
-      --with-freetype-dir=/usr/include/ \
-      --with-png-dir=/usr/include/ \
-      --with-jpeg-dir=/usr/include/ && \
+      --with-freetype \
+      --with-jpeg && \
     #curl iconv session
     #docker-php-ext-install pdo_mysql pdo_sqlite mysqli mcrypt gd exif intl xsl json soap dom zip opcache && \
     docker-php-ext-install iconv pdo_mysql pdo_sqlite pgsql pdo_pgsql mysqli gd exif intl xsl json soap dom zip opcache && \
-    pecl install xdebug-2.7.2 && \
+    pecl install xdebug-2.9.2 && \
     pecl install -o -f redis && \
     echo "extension=redis.so" > /usr/local/etc/php/conf.d/redis.ini && \
     docker-php-source delete && \
@@ -229,18 +238,19 @@ RUN echo @testing http://nl.alpinelinux.org/alpine/edge/testing >> /etc/apk/repo
     php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
     php composer-setup.php --quiet --install-dir=/usr/bin --filename=composer && \
     rm composer-setup.php && \
-    pip install -U pip && \
-    pip install -U certbot && \
+    pip3 install -U pip && \
+    pip3 install -U certbot && \
     mkdir -p /etc/letsencrypt/webrootauth && \
-    apk del gcc musl-dev linux-headers libffi-dev augeas-dev python-dev make autoconf
+    apk del gcc musl-dev linux-headers libffi-dev augeas-dev python3-dev make autoconf
 #    apk del .sys-deps
 #    ln -s /usr/bin/php7 /usr/bin/php
 
-ADD conf/supervisord.conf /etc/supervisord.conf
+
+COPY conf/supervisord.conf /etc/supervisord.conf
 
 # Copy our nginx config
 RUN rm -Rf /etc/nginx/nginx.conf
-ADD conf/nginx.conf /etc/nginx/nginx.conf
+COPY conf/nginx.conf /etc/nginx/nginx.conf
 
 # nginx site conf
 RUN mkdir -p /etc/nginx/sites-available/ && \
@@ -248,9 +258,16 @@ mkdir -p /etc/nginx/sites-enabled/ && \
 mkdir -p /etc/nginx/ssl/ && \
 rm -Rf /var/www/* && \
 mkdir /var/www/html/
-# ADD conf/nginx-site.conf /etc/nginx/sites-available/default.conf
-# ADD conf/nginx-site-ssl.conf /etc/nginx/sites-available/default-ssl.conf
+# COPY conf/nginx-site.conf /etc/nginx/sites-available/default.conf
+# COPY conf/nginx-site-ssl.conf /etc/nginx/sites-available/default-ssl.conf
 # RUN ln -s /etc/nginx/sites-available/default.conf /etc/nginx/sites-enabled/default.conf
+
+## disabled due to license changes (to fix in next release)
+# Add GeoLite2 databases (https://dev.maxmind.com/geoip/geoip2/geolite2/)
+#RUN curl -fSL http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz -o /etc/nginx/GeoLite2-City.mmdb.gz \
+#    && curl -fSL http://geolite.maxmind.com/download/geoip/database/GeoLite2-Country.mmdb.gz -o /etc/nginx/GeoLite2-Country.mmdb.gz \
+#    && gunzip /etc/nginx/GeoLite2-City.mmdb.gz \
+#    && gunzip /etc/nginx/GeoLite2-Country.mmdb.gz
 
 # tweak php-fpm config
 RUN echo "cgi.fix_pathinfo=0" > ${php_vars} &&\
@@ -275,6 +292,7 @@ RUN echo "cgi.fix_pathinfo=0" > ${php_vars} &&\
         ${fpm_conf}
 #    ln -s /etc/php7/php.ini /etc/php7/conf.d/php.ini && \
 #    find /etc/php7/conf.d/ -name "*.ini" -exec sed -i -re 's/^(\s*)#(.*)/\1;\2/g' {} \;
+
 
 
 
