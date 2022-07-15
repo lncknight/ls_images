@@ -5,7 +5,7 @@ FROM surnet/alpine-wkhtmltopdf:3.10-0.12.5-full as wkhtmltopdf
 # FROM test as wkhtmltopdf
 # FROM surnet/alpine-wkhtmltopdf:3.9-0.12.5-full as wkhtmltopdf
 
-FROM richarvey/nginx-php-fpm:1.8.2
+FROM richarvey/nginx-php-fpm:1.9.1
 
 LABEL maintainer="Lawrence Lau <lncknight@gmail.com>"
 
