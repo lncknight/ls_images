@@ -46,7 +46,7 @@ jobs:
             ${{ runner.os }}-buildx-
 
       - name: Build image
-        run: docker buildx build $IMAGE_NAME --tag tmp
+        run: docker buildx build --no-cache $IMAGE_NAME --tag tmp
 
       -
         name: Login to Docker Hub
