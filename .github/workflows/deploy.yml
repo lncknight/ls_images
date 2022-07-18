@@ -184,6 +184,8 @@ jobs:
           docker tag tmp $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
 
+  # test mulitple platform
+  # ref: https://github.com/docker/build-push-action/blob/master/docs/advanced/multi-platform.md
   test:
     env:
       IMAGE_NAME: 'test'
