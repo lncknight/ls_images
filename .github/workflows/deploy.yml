@@ -187,7 +187,7 @@ jobs:
   test:
     env:
       IMAGE_NAME: 'test'
-s
+
     ######### common #########
     timeout-minutes: 10
 
