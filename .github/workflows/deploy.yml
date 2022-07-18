@@ -208,7 +208,7 @@ jobs:
             ${{ runner.os }}-buildx-
 
       - name: Build image
-        run: docker buildx build $IMAGE_NAME --tag tmp
+        run: docker buildx build --platform linux/amd64,linux/arm64 $IMAGE_NAME --tag tmp
 
       - name: Setup upterm session
         uses: lhotari/action-upterm@v1
