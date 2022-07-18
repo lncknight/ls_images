@@ -214,8 +214,8 @@ jobs:
           docker buildx inspect --bootstrap
           docker buildx build --platform linux/amd64,linux/arm64 $IMAGE_NAME --tag tmp
 
-      - name: Setup upterm session
-        uses: lhotari/action-upterm@v1
+      # - name: Setup upterm session
+      #   uses: lhotari/action-upterm@v1
 
       -
         name: Login to Docker Hub
