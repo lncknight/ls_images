@@ -41,6 +41,7 @@ RUN set -xe \
     && apk del .build-deps
 
 # RUN apk upgrade --update
+RUN apk update
 
 # basic
 RUN buildDeps=" \
@@ -56,8 +57,10 @@ RUN buildDeps=" \
         nodejs \
         npm \
         rsync \
-    " \
-    && apk update && apk add $buildDeps $runtimeDeps && apk del $buildDeps
+    "
+
+# RUN apk add $buildDeps $runtimeDeps && apk del $buildDeps
+RUN apk add $runtimeDeps
 
 # swoole
 # ref: https://github.com/swoole/swoole-src/issues/1557
