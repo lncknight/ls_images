@@ -6,10 +6,10 @@ FROM surnet/alpine-wkhtmltopdf:3.10-0.12.5-full as wkhtmltopdf
 # FROM surnet/alpine-wkhtmltopdf:3.9-0.12.5-full as wkhtmltopdf
 
 # nginx error
-# FROM richarvey/nginx-php-fpm:1.10.4 
+FROM richarvey/nginx-php-fpm:1.10.4 
 # FROM richarvey/nginx-php-fpm:1.9.1
 # worked
-FROM richarvey/nginx-php-fpm:1.8.2 
+# FROM richarvey/nginx-php-fpm:1.8.2 
 
 LABEL maintainer="Lawrence Lau <lncknight@gmail.com>"
 
