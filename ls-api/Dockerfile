@@ -13,7 +13,6 @@ FROM richarvey/nginx-php-fpm:1.8.2
 
 LABEL maintainer="Lawrence Lau <lncknight@gmail.com>"
 
-
 # COPY --from=mssql /opt/microsoft/ /opt/microsoft/
 # COPY --from=mssql /opt/mssql-tools/ /opt/mssql-tools/
 # COPY --from=mssql /usr/lib/libmsodbcsql-13.so /usr/lib/libmsodbcsql-13.so
