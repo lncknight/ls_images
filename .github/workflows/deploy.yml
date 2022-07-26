@@ -45,8 +45,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-v1-
 
-      - name: Setup upterm session
-        uses: lhotari/action-upterm@v1
+      # - name: Setup upterm session
+      #   uses: lhotari/action-upterm@v1
         
       - name: Build image
         run: docker buildx build --no-cache $IMAGE_NAME --tag tmp
