@@ -40,8 +40,8 @@ RUN set -xe \
     && docker-php-source delete \
     && apk del .build-deps
 
-# RUN apk upgrade --update
-RUN apk update
+RUN apk upgrade --update
+# RUN apk update
 
 # basic
 RUN buildDeps=" \
