@@ -236,7 +236,7 @@ EXPOSE 80
 # Add Scripts
 
 ADD conf/supervisord.conf /etc/supervisord.conf
-ADD conf/nginx.conf /etc/nginx.conf
+ADD conf/nginx.conf /etc/nginx/nginx.conf
 ADD docker/start.sh /start.sh
 RUN chmod 755 /start.sh
 
