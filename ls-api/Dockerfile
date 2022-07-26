@@ -59,8 +59,8 @@ RUN buildDeps=" \
         rsync \
     "
 
-# RUN apk add $buildDeps $runtimeDeps && apk del $buildDeps
-RUN apk add $runtimeDeps
+RUN apk add $buildDeps $runtimeDeps && apk del $buildDeps
+# RUN apk add $runtimeDeps
 
 # swoole
 # ref: https://github.com/swoole/swoole-src/issues/1557
