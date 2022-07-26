@@ -59,6 +59,11 @@ RUN apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/comm
 RUN echo @edge http://nl.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories
 
 
+ENV TIMEZONE=Asia/Hong_Kong
+RUN apk update && apk add tzdata \
+     && cp -r -f /usr/share/zoneinfo/$TIMEZONE /etc/localtime
+
+
 RUN apk upgrade --update
 # RUN apk update
 
