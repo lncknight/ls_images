@@ -136,6 +136,8 @@ RUN mkdir -p /opt/wkhtmltox/bin/ \
     && ln -s /bin/wkhtmltoimage /opt/wkhtmltox/bin/wkhtmltoimage \
     && ln -s /bin/wkhtmltopdf /opt/wkhtmltox/bin/wkhtmltopdf
 
+RUN apk add npm 
+
 # Nodejs
 RUN npm config set unsafe-perm true \
     && npm -g i pm2 wscat http-server
