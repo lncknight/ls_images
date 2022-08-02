@@ -133,9 +133,8 @@ RUN apk add --no-cache imagemagick \
 # php: gd
 # ref: https://github.com/docker-library/php/issues/931#issuecomment-568658449
 # ref: https://github.com/docker-library/php/issues/912#issuecomment-559918036
-RUN docker-php-ext-configure gd \
-      --with-freetype=/usr/include/ \
-      --with-jpeg=/usr/include/
+RUN docker-php-ext-configure gd --with-freetype-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr
+
 
 # php extensions
 RUN docker-php-ext-install iconv pdo_mysql pdo_sqlite pgsql pdo_pgsql mysqli gd exif intl xsl json soap dom zip opcache
