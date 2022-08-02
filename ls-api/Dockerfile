@@ -10,7 +10,7 @@ FROM surnet/alpine-wkhtmltopdf:3.10-0.12.5-full as wkhtmltopdf
 # iconv issue
 # FROM php:7.4.30-fpm-alpine3.16
 # worked
-FROM php:7.4-fpm-alpine3.13
+FROM php:7.3-fpm-alpine3.13
 
 # nginx error
 # FROM richarvey/nginx-php-fpm:1.10.4
