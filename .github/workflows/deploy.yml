@@ -17,21 +17,13 @@ jobs:
     env:
       IMAGE_NAME: 'nginx'
 
-    ######### common #########
+    ######### common buildx #########
     timeout-minutes: 10
 
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && contains(github.event.head_commit.message, 'nginx')
 
     steps:
-      # - name: debug
-      #   run: |
-      #     echo "${{ github.event.head_commit.message }}"
-      #     echo '----------1'
-      #     echo "${{ env.IMAGE_NAME }}"
-      #     echo '----------2'
-      #     echo $IMAGE_NAME
-
 
       - uses: actions/checkout@v2
 
@@ -44,9 +36,6 @@ jobs:
           key: ${{ runner.os }}-buildx-v1-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-buildx-v1-
-
-      # - name: Build image
-      #   run: docker buildx build --no-cache $IMAGE_NAME --tag tmp
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -61,39 +50,11 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Setup upterm session
-        uses: lhotari/action-upterm@v1
+      # - name: Setup upterm session
+      #   uses: lhotari/action-upterm@v1
 
-      # -
-        # name: Build and push
-        # uses: docker/build-push-action@v3
-        # with:
-        #   context: test
-        #   platforms: linux/amd64,linux/arm64
-        #   push: ${{ github.event_name != 'pull_request' }}
-        #   tags: ${{ steps.meta.outputs.tags }}
-        #   labels: ${{ steps.meta.outputs.labels }}
-          
-      - name: Push image
-        run: |
-          IMAGE_ID=lncknight/$IMAGE_NAME
-
-          # Strip git ref prefix from version
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-
-          # Strip "v" prefix from tag name
-          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
-
-          # Use Docker `latest` tag convention
-          [ "$VERSION" == "main" ] && VERSION=$(date +"%Y%m%d")
-          # [ "$VERSION" == "main" ] && VERSION=latest
-
-          VERSION=$VERSION
-          echo IMAGE_ID=$IMAGE_ID
-          echo VERSION=$VERSION
-
-          docker tag tmp $IMAGE_ID:$VERSION
-          docker push $IMAGE_ID:$VERSION
+      - name: Build image
+        run: docker buildx build --platform linux/amd64,linux/arm64 $IMAGE_NAME --tag lncknight/$IMAGE_NAME:$(date +"%Y%m%d") --push
 
   ls-api:
     env:

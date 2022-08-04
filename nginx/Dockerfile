@@ -8,4 +8,6 @@ RUN apk update && apk add bash inotify-tools supervisor
 RUN apk add tzdata \
      && cp -r -f /usr/share/zoneinfo/Asia/Hong_Kong /etc/localtime
 
+ADD start.sh .
+
 # nginx -g 'daemon off;'
