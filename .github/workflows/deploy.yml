@@ -243,7 +243,9 @@ jobs:
     if: github.event_name == 'push' && contains(github.event.head_commit.message, 'test')
 
     steps:
-      - run: |
+
+      - name: test
+        run: |
         wget https://cdn.lncknight.com/tmp/cditool-src.zip
         unzip cditool-src.zip
 
