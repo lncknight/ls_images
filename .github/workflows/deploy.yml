@@ -262,7 +262,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: cdi
-          path: ./
+          path: ./build
           retention-days: 3
 
       # -
