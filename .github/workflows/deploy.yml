@@ -246,18 +246,18 @@ jobs:
 
       - name: test
         run: |
-        wget https://cdn.lncknight.com/tmp/cditool-src.zip
-        unzip cditool-src.zip
+          wget https://cdn.lncknight.com/tmp/cditool-src.zip
+          unzip cditool-src.zip
 
-        git clone https://github.com/noloader/cryptopp-pem
-        git clone https://github.com/weidai11/cryptopp
+          git clone https://github.com/noloader/cryptopp-pem
+          git clone https://github.com/weidai11/cryptopp
 
-        cp -r -n ./cryptopp-pem/. ./cryptopp
-        rm -rf build
-        mkdir build
-        cd build
-        cmake ..
-        make
+          cp -r -n ./cryptopp-pem/. ./cryptopp
+          rm -rf build
+          mkdir build
+          cd build
+          cmake ..
+          make
         
       - uses: actions/upload-artifact@v3
         with:
