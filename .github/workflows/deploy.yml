@@ -140,7 +140,7 @@ jobs:
       #   uses: lhotari/action-upterm@v1
 
       - name: Build image
-        run: docker buildx build --platform linux/amd64,linux/arm64 $IMAGE_NAME --tag lncknight/$IMAGE_NAME:$(date +"%Y%m%d")-php74 --push
+        run: docker buildx build --platform linux/amd64,linux/arm64 $IMAGE_NAME --tag lncknight/$IMAGE_NAME:$(date +"%Y%m%d") --push
 
   ls-web-v2:
     env:
