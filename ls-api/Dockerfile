@@ -12,7 +12,7 @@ FROM surnet/alpine-wkhtmltopdf:3.16.0-0.12.6-full as wkhtmltopdf
 # iconv issue
 # FROM php:7.4.30-fpm-alpine3.16
 # worked
-FROM php:7.3-fpm-alpine3.13
+FROM php:7.4-fpm-alpine3.13
 
 # nginx error
 # FROM richarvey/nginx-php-fpm:1.10.4
@@ -135,8 +135,9 @@ RUN apk add --no-cache imagemagick \
 # php: gd
 # ref: https://github.com/docker-library/php/issues/931#issuecomment-568658449
 # ref: https://github.com/docker-library/php/issues/912#issuecomment-559918036
-RUN docker-php-ext-configure gd --with-freetype-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr
-
+RUN docker-php-ext-configure gd \
+      --with-freetype=/usr/include/ \
+      --with-jpeg=/usr/include/
 
 # php extensions
 RUN docker-php-ext-install iconv pdo_mysql pdo_sqlite pgsql pdo_pgsql mysqli gd exif intl xsl json soap dom zip opcache

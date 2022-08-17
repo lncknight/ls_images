@@ -2,6 +2,8 @@
 
 ### change log
 
+- 20220818-php74 - php 7.4 support arm64
+- 20220818 - php 7.3 support arm64
 - 20220802 - php 7.3 from scratch
 - 20220726 - upgrade php 7.4 from scratch
 - 20220717 - upgrade 1.9.1 (php7.4)
