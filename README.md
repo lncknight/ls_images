@@ -2,6 +2,7 @@
 
 ### change log
 
+- 20220824 - php 7.3 support arm64
 - 20220817 - php 7.4 support arm64
 - 20220802 - php 7.3 from scratch
 - 20220726 - upgrade php 7.4 from scratch
