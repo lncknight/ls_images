@@ -18,14 +18,16 @@ https://gitlab.com/ric_harvey/nginx-php-fpm
 
 ### change log
 
+- 20220817 - arm64 supproted
 - 20220613 - update ip database
 - 20210905 - upadte base image
 - 20210729 - add pm2 rotate
 - 20191016 - latast stable
 
 ## ls-web-v2
+- 20220817 - arm64 supproted
 
 ### change log
 
 ## nginx
-20220804 - 1st
+- 20220804 - 1st
