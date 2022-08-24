@@ -9,7 +9,7 @@ WORKDIR /usr/src/app
 RUN apk update && apk add tzdata \
      && cp -r -f /usr/share/zoneinfo/$TIMEZONE /etc/localtime
 
-RUN apk update && apk add bash openssh rsync imagemagick
+RUN apk update && apk add bash openssh rsync imagemagick python make g++
 
 # RUN npm config set unsafe-perm true
 
