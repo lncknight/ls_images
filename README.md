@@ -2,6 +2,7 @@
 
 ### change log
 
+- 20220824-php73 - php 7.3 (support arm64/v8)
 - 20220824 - php 7.3 support arm64
 - 20220817 - php 7.4 support arm64
 - 20220802 - php 7.3 from scratch
@@ -18,6 +19,7 @@ https://gitlab.com/ric_harvey/nginx-php-fpm
 
 ### change log
 
+- 20220824 - add build deps
 - 20220817 - arm64 supproted
 - 20220613 - update ip database
 - 20210905 - upadte base image
