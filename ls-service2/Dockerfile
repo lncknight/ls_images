@@ -13,10 +13,12 @@ RUN apk update && apk add bash openssh rsync imagemagick python make g++
 
 # RUN npm config set unsafe-perm true
 
-RUN npm -g i pm2 pm2-logrotate firebase grpc
+RUN npm -g i pm2 pm2-logrotate 
 
 RUN pm2 set pm2-logrotate:max_size 100m \
     && pm2 save
+
+RUN npm -g i firebase
 
 COPY startup.sh /usr/src/app/docker/startup.sh 
 
