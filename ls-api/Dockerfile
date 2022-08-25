@@ -139,7 +139,7 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr --with-jpeg-dir=/usr --
 
 
 # php extensions
-RUN docker-php-ext-install iconv pdo_mysql pdo_sqlite pgsql pdo_pgsql mysqli gd exif intl xsl json soap dom zip opcache
+RUN docker-php-ext-install iconv pdo_mysql pdo_sqlite pgsql pdo_pgsql mysqli gd exif intl xsl json soap dom zip opcache bcmath calendar
 
 RUN pecl install -o -f redis && \
     echo "extension=redis.so" > /usr/local/etc/php/conf.d/redis.ini && \
