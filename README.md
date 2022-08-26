@@ -2,6 +2,7 @@
 
 ### change log
 
+- 20220827 - try php 7.2 (support arm64/v8)
 - 20220826 - php 7.3 add php ext
 - 20220824-php73 - php 7.3 (support arm64/v8)
 - 20220824 - php 7.3 support arm64
