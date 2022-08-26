@@ -59,7 +59,7 @@ RUN apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/comm
 # alpine repo
 # https://stackoverflow.com/questions/49067625/how-can-i-use-chinese-in-alpine-headless-chrome
 # https://blog.csdn.net/zimou5581/article/details/101368129
-RUN echo @edge http://nl.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories
+# RUN echo @edge http://nl.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories
 
 
 ENV TIMEZONE=Asia/Hong_Kong
