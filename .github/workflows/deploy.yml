@@ -103,16 +103,16 @@ jobs:
     env:
       IMAGE_NAME: 'ls-api'
 
-    timeout-minutes: 360
+    timeout-minutes: 480
 
     strategy:
       matrix:
-        php-version: [php72, php73, php74]
+        version: [php72, php73, php74]
 
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && contains(github.event.head_commit.message, 'ls-api')
 
-    ######### common buildx #########
+    ######### common buildx with matrix #########
     steps:
 
       - uses: actions/checkout@v2
@@ -144,8 +144,8 @@ jobs:
       #   uses: lhotari/action-upterm@v1
 
       - name: Build image
-        run: docker buildx build --platform linux/amd64,linux/arm64 $IMAGE_NAME --tag lncknight/$IMAGE_NAME:$(date +"%Y%m%d") --push
-        # run: docker buildx build --platform linux/amd64,linux/arm64 $IMAGE_NAME --tag lncknight/$IMAGE_NAME:$(date +"%Y%m%d") --push
+        run: docker buildx build --file $IMAGE_NAME/Dockerfile.${{ matrix.version }} --platform linux/amd64 $IMAGE_NAME --tag lncknight/$IMAGE_NAME:$(date +"%Y%m%d")-${{ matrix.version}} --push
+        # run: docker buildx build --file $IMAGE_NAME/Dockerfile.${{ matrix.version }} --platform linux/amd64,linux/arm64 $IMAGE_NAME --tag lncknight/$IMAGE_NAME:$(date +"%Y%m%d")-${{ matrix.version}} --push
 
   ls-service2:
     env:
@@ -239,7 +239,6 @@ jobs:
     env:
       IMAGE_NAME: 'test'
 
-    ######### common #########
     timeout-minutes: 10
 
     strategy:
@@ -249,6 +248,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && contains(github.event.head_commit.message, 'test')
 
+    ######### common #########
     steps:
 
       # - name: Setup upterm session
