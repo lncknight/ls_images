@@ -2,7 +2,8 @@
 
 ### change log
 
-- 20220827 - php version matrix
+- 20220828 - add chinese fonts
+- 20220827 - === php version matrix ===
 - 20220826 - try php 7.2 (support arm64/v8)
 - 20220826 - php 7.3 add php ext
 - 20220824-php73 - php 7.3 (support arm64/v8)
