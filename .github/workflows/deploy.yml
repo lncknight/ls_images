@@ -244,7 +244,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [12, 14, 16]
+        version: [12, 14, 16]
 
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && contains(github.event.head_commit.message, 'test')
@@ -296,4 +296,4 @@ jobs:
       #   uses: lhotari/action-upterm@v1
 
       - name: Build image
-        run: docker buildx build --file $IMAGE_NAME/Dockerfile.${{ matrix.node-version }} --platform linux/amd64,linux/arm64 $IMAGE_NAME --tag lncknight/$IMAGE_NAME:$(date +"%Y%m%d") --push
+        run: docker buildx build --file $IMAGE_NAME/Dockerfile.${{ matrix.version }} --platform linux/amd64,linux/arm64 $IMAGE_NAME --tag lncknight/$IMAGE_NAME:$(date +"%Y%m%d")-${{ matrix.version}} --push
