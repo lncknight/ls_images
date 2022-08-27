@@ -216,7 +216,7 @@ RUN apk add --no-cache \
 && rm -rf /tmp/* \
 && apk del .build-deps
 
-RUN apk add ttf-ubuntu-font-family wqy-zenhei@edge
+# RUN apk add ttf-ubuntu-font-family wqy-zenhei@edge
 
 # https://hub.docker.com/r/surnet/alpine-wkhtmltopdf
 # Copy wkhtmltopdf files from docker-wkhtmltopdf image
