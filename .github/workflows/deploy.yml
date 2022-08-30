@@ -107,7 +107,7 @@ jobs:
 
     strategy:
       matrix:
-        version: [php72, php73, php74]
+        version: [php72, php73, php74, php80, php81]
 
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && contains(github.event.head_commit.message, 'ls-api')
