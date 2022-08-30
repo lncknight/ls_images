@@ -140,8 +140,8 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      # - name: Setup upterm session
-      #   uses: lhotari/action-upterm@v1
+      - name: Setup upterm session
+        uses: lhotari/action-upterm@v1
 
       - name: Build image
         run: docker buildx build --file $IMAGE_NAME/Dockerfile.${{ matrix.version }} --platform linux/amd64 $IMAGE_NAME --tag lncknight/$IMAGE_NAME:$(date +"%Y%m%d")-${{ matrix.version}} --push
