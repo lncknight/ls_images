@@ -58,7 +58,7 @@ RUN apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/comm
 # alpine repo
 # https://stackoverflow.com/questions/49067625/how-can-i-use-chinese-in-alpine-headless-chrome
 # https://blog.csdn.net/zimou5581/article/details/101368129
-RUN apk add -X https://dl-cdn.alpinelinux.org/alpine/v3.13/main -u alpine-keys
+RUN apk add -X https://dl-cdn.alpinelinux.org/alpine/v3.16/main -u alpine-keys
 RUN echo @edge http://nl.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories
 
 
@@ -209,7 +209,6 @@ RUN apk add --no-cache \
   ttf-droid \
   ttf-freefont \
   ttf-liberation \
-  ttf-freefont \
   libpng \
   font-adobe-100dpi \
   libjpeg \
@@ -227,7 +226,7 @@ RUN apk add --no-cache \
 && rm -rf /tmp/* \
 && apk del .build-deps
 
-RUN apk add ttf-ubuntu-font-family wqy-zenhei@edge
+RUN apk add wqy-zenhei@edge
 
 # https://hub.docker.com/r/surnet/alpine-wkhtmltopdf
 # Copy wkhtmltopdf files from docker-wkhtmltopdf image
