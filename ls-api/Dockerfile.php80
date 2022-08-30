@@ -58,6 +58,7 @@ RUN apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/comm
 # alpine repo
 # https://stackoverflow.com/questions/49067625/how-can-i-use-chinese-in-alpine-headless-chrome
 # https://blog.csdn.net/zimou5581/article/details/101368129
+# ref: https://dailydevsblog.com/troubleshoot/resolved-error-http-dl-4-alpinelinux-org-alpine-edge-testing-untrusted-signature-209905/
 RUN apk add -X https://dl-cdn.alpinelinux.org/alpine/v3.13/main -u alpine-keys
 RUN echo @edge http://nl.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories
 
@@ -144,12 +145,14 @@ RUN docker-php-ext-configure gd \
 RUN docker-php-ext-install iconv pdo_mysql pdo_sqlite pgsql pdo_pgsql mysqli gd exif intl xsl soap dom zip opcache
 
 RUN apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS imagemagick-dev libtool
-RUN export CFLAGS="$PHP_CFLAGS" CPPFLAGS="$PHP_CPPFLAGS" LDFLAGS="$PHP_LDFLAGS" \
-    && pecl install imagick-3.5.1 \
+#RUN export CFLAGS="$PHP_CFLAGS" CPPFLAGS="$PHP_CPPFLAGS" LDFLAGS="$PHP_LDFLAGS" \
+#    && pecl install -o -f imagick-3.5.1 \
+#    && docker-php-ext-enable imagick \
+#    && apk add --no-cache --virtual .imagick-runtime-deps imagemagick
+RUN pecl install -o -f imagick-3.7.0 \
     && docker-php-ext-enable imagick \
-    && apk add --no-cache --virtual .imagick-runtime-deps imagemagick \
-    && apk del .phpize-deps
-    
+    && echo 'extension=imagick.so' > /usr/local/etc/php/conf.d/docker-php-ext-imagick.ini    
+
 RUN pecl install -o -f redis && \
     echo "extension=redis.so" > /usr/local/etc/php/conf.d/redis.ini && \
     docker-php-source delete
@@ -242,9 +245,7 @@ RUN npm config set unsafe-perm true \
 
 
 # Install Composer.
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
-    && ln -s $(composer config --global home) /root/composer
-ENV PATH=$PATH:/root/composer/vendor/bin COMPOSER_ALLOW_SUPERUSER=1
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 
 EXPOSE 80
