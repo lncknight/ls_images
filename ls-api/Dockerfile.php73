@@ -158,7 +158,13 @@ RUN mkdir -p /etc/nginx && \
     pip install -U pip && \
     apk del gcc musl-dev linux-headers libffi-dev augeas-dev make autoconf
     
-    
+RUN apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS imagemagick-dev libtool \
+    && export CFLAGS="$PHP_CFLAGS" CPPFLAGS="$PHP_CPPFLAGS" LDFLAGS="$PHP_LDFLAGS" \
+    && pecl install imagick-3.4.3 \
+    && docker-php-ext-enable imagick \
+    && apk add --no-cache --virtual .imagick-runtime-deps imagemagick \
+    && apk del .phpize-deps
+        
 # swoole
 # ref: https://github.com/swoole/swoole-src/issues/1557
 # issue: https://askubuntu.com/questions/509663/c-preprocessor-lib-cpp-fails-sanity-check/509671
