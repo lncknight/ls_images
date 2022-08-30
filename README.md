@@ -2,7 +2,7 @@
 
 ### change log
 
-- 20220830 - add imagick
+- 20220830 - add imagick & support php8
 - 20220827 - add chinese fonts (excluding php72)
 - 20220827 - === php version matrix ===
 - 20220826 - try php 7.2 (support arm64/v8)
