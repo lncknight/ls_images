@@ -58,6 +58,7 @@ RUN apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/comm
 # alpine repo
 # https://stackoverflow.com/questions/49067625/how-can-i-use-chinese-in-alpine-headless-chrome
 # https://blog.csdn.net/zimou5581/article/details/101368129
+RUN apk add -X https://dl-cdn.alpinelinux.org/alpine/v3.13/main -u alpine-keys
 RUN echo @edge http://nl.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories
 
 
@@ -140,11 +141,11 @@ RUN docker-php-ext-configure gd \
       --with-jpeg=/usr/include/
 
 # php extensions
-RUN docker-php-ext-install iconv pdo_mysql pdo_sqlite pgsql pdo_pgsql mysqli gd exif intl xsl json soap dom zip opcache
+RUN docker-php-ext-install iconv pdo_mysql pdo_sqlite pgsql pdo_pgsql mysqli gd exif intl xsl soap dom zip opcache
 
-RUN apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS imagemagick-dev libtool \
-    && export CFLAGS="$PHP_CFLAGS" CPPFLAGS="$PHP_CPPFLAGS" LDFLAGS="$PHP_LDFLAGS" \
-    && pecl install imagick-3.4.3 \
+RUN apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS imagemagick-dev libtool
+RUN export CFLAGS="$PHP_CFLAGS" CPPFLAGS="$PHP_CPPFLAGS" LDFLAGS="$PHP_LDFLAGS" \
+    && pecl install imagick-3.5.1 \
     && docker-php-ext-enable imagick \
     && apk add --no-cache --virtual .imagick-runtime-deps imagemagick \
     && apk del .phpize-deps
