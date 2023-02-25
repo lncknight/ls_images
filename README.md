@@ -37,4 +37,6 @@ https://gitlab.com/ric_harvey/nginx-php-fpm
 ### change log
 
 ## nginx
+- TODO - oauth
+- 20230225 - certbot
 - 20220804 - 1st
