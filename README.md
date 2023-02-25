@@ -37,9 +37,8 @@ https://gitlab.com/ric_harvey/nginx-php-fpm
 ### change log
 
 ## nginx
-- TODO - oauth, 
-  - startup: chown -R nginx:nginx /var/log/nginx
-  - logrotate
+- TODO - oauth, logrotate
 - 20230225 - certbot
+  - chown -R nginx:nginx /var/log/nginx
 - 20220804 - 1st
 

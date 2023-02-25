@@ -9,5 +9,7 @@
 
 # supervisord -c /etc/supervisord.conf
 
+chown -R nginx:nginx /var/log/nginx
+
 echo 'starting NGINX'
 nginx -g "daemon off;"
