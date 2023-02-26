@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# this script not benn run
+
 # htpasswd -b -c /etc/nginx/arena.passwd $ARENA_USER $ARENA_PASSWD
 # htpasswd -b -c /etc/nginx/redis_admin.passwd $REDIS_ADMIN_USER $REDIS_ADMIN_PASSWD
 
