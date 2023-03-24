@@ -7,3 +7,5 @@ RUN cd ~ \
      && unzip sonar-scanner-cli-4.7.0.2747.zip 
 
 RUN mv /root/sonar-scanner-4.7.0.2747 /root/sonar-scanner-cli
+
+WORKDIR /app/src
