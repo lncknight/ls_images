@@ -98,6 +98,49 @@ jobs:
 
       - name: Build image
         run: docker buildx build --platform linux/amd64,linux/arm64 $IMAGE_NAME --tag lncknight/$IMAGE_NAME:$(date +"%Y%m%d") --push
+  
+  sonar:
+    env:
+      IMAGE_NAME: 'sonar'
+
+    timeout-minutes: 60
+
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && contains(github.event.head_commit.message, 'sonar')
+
+    ######### common buildx #########
+    steps:
+
+      - uses: actions/checkout@v2
+
+      # ref: https://github.com/docker/build-push-action/blob/master/docs/advanced/cache.md
+      # ref: https://evilmartians.com/chronicles/build-images-on-github-actions-with-docker-layer-caching
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-v1-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-v1-
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      -
+        name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      # - name: Setup upterm session
+      #   uses: lhotari/action-upterm@v1
+
+      - name: Build image
+        run: docker buildx build --platform linux/amd64,linux/arm64 $IMAGE_NAME --tag lncknight/$IMAGE_NAME:$(date +"%Y%m%d") --push
 
   ls-api:
     env:
