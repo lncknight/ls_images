@@ -9,3 +9,5 @@ RUN cd ~ \
 RUN mv /root/sonar-scanner-4.7.0.2747 /root/sonar-scanner-cli
 
 WORKDIR /app/src
+
+COPY start.sh /root/start.sh
