@@ -127,7 +127,7 @@ RUN apk add --no-cache \
 RUN apk add --no-cache imagemagick \
     nodejs \
     npm \
-    nginx \
+    nginx-debug \
     rsync \
     mysql-client
 
