@@ -26,7 +26,7 @@ COPY ./data /tmp/data
 RUN cd /tmp/data \
     && cat x* > tmp.tar.gz \
     && tar xvf tmp.tar.gz \
-    && mv GeoLite2-City_20220610/GeoLite2-City.mmdb .. \
+    && mv GeoLite2-City.mmdb .. \
     && rm -rf *
 
 EXPOSE 3000
