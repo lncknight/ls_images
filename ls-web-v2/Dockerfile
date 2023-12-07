@@ -8,7 +8,7 @@ WORKDIR /usr/src/app
 
 RUN apk update && apk add bash openssh rsync
 
-RUN npm config set unsafe-perm true
+# RUN npm config set unsafe-perm true
 
 RUN npm -g i gulp
 RUN npm -g i pm2 npm-run-all cross-env
