@@ -33,7 +33,8 @@ https://gitlab.com/ric_harvey/nginx-php-fpm
 - 20191016 - latast stable
 
 ## ls-web-v2
-- 20220817 - arm64 supproted
+- 20231207 - node 18.19-slim
+- 20220817 - arm64 supproted (node 12.22)
 
 ### change log
 
