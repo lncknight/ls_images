@@ -1,4 +1,4 @@
-FROM node:18.19-slim
+FROM node:18.19-alpine3.18
 
 ENV ENV prod
 ENV PORT 3000
