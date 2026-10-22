@@ -143,14 +143,28 @@ jobs:
         run: docker buildx build --platform linux/amd64,linux/arm64 $IMAGE_NAME --tag lncknight/$IMAGE_NAME:$(date +"%Y%m%d") --push
 
   ls-api:
+    name: ls-api PHP ${{ matrix.php }} (${{ matrix.version }})
     env:
       IMAGE_NAME: 'ls-api'
 
     timeout-minutes: 480
 
     strategy:
+      fail-fast: false
       matrix:
-        version: [php72, php73, php74, php80, php81]
+        include:
+          - version: '82'
+            php: '8.2.35'
+            base: php:8.2.35-fpm-alpine@sha256:74d21049efdbf57d7ecb245ef872d2b45b8e331d5ef6a081ea9f73a62aafa496
+          - version: '83'
+            php: '8.3.36'
+            base: php:8.3.36-fpm-alpine@sha256:81cb692948e6de4275f7e107c50a34e963a440660f2c5b8502d11071f7d30338
+          - version: '84'
+            php: '8.4.27'
+            base: php:8.4.27-fpm-alpine@sha256:8ce34c869fae0f8da2c82d8aeda222f0782e8e5ae2b370fb43cbad84e9e2ea55
+          - version: '85'
+            php: '8.5.12'
+            base: php:8.5.12-fpm-alpine@sha256:4943e6c8a08008605b470f6171d611a89384bac97188e4b0a7aefd3f793cd040
 
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && contains(github.event.head_commit.message, 'ls-api')
@@ -158,12 +172,12 @@ jobs:
     ######### common buildx with matrix #########
     steps:
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       # ref: https://github.com/docker/build-push-action/blob/master/docs/advanced/cache.md
       # ref: https://evilmartians.com/chronicles/build-images-on-github-actions-with-docker-layer-caching
       - name: Cache Docker layers
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-v1-${{ github.sha }}
@@ -171,14 +185,14 @@ jobs:
             ${{ runner.os }}-buildx-v1-
       -
         name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
       -
         name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
       -
         name: Login to Docker Hub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
@@ -187,8 +201,7 @@ jobs:
       #   uses: lhotari/action-upterm@v1
 
       - name: Build image
-        # run: docker buildx build --file $IMAGE_NAME/Dockerfile.${{ matrix.version }} --platform linux/amd64 $IMAGE_NAME --tag lncknight/$IMAGE_NAME:$(date +"%Y%m%d")-${{ matrix.version}} --push
-        run: docker buildx build --file $IMAGE_NAME/Dockerfile.${{ matrix.version }} --platform linux/amd64,linux/arm64 $IMAGE_NAME --tag lncknight/$IMAGE_NAME:$(date +"%Y%m%d")-${{ matrix.version}} --push
+        run: docker buildx build --file "$IMAGE_NAME/Dockerfile.php8" --build-arg PHP_BASE="${{ matrix.base }}" --platform linux/amd64,linux/arm64 "$IMAGE_NAME" --tag "lncknight/$IMAGE_NAME:$(TZ=Asia/Hong_Kong date +'%Y%m%d')-${{ matrix.version }}" --push
 
   ls-service2:
     env:

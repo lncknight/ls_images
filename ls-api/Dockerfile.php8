@@ -1,0 +1,54 @@
+ARG PHP_BASE=php:8.5.12-fpm-alpine@sha256:4943e6c8a08008605b470f6171d611a89384bac97188e4b0a7aefd3f793cd040
+FROM surnet/alpine-wkhtmltopdf:3.22.0-0.12.6-full@sha256:0815dedee1b38468c291f48d3011b4f74b2c802672f6bb3108363ecacdb5bc56 AS wkhtmltopdf
+FROM ${PHP_BASE}
+
+ENV TIMEZONE=Asia/Hong_Kong
+
+RUN apk add --no-cache \
+        bash openssh-client wget supervisor curl git ca-certificates dialog \
+        imagemagick nodejs npm nginx rsync mysql-client python3 py3-pip \
+        libstdc++ freetds unixodbc libzip libpng icu-libs libpq libxslt \
+        freetype sqlite-libs libjpeg-turbo fontconfig libx11 libxrender libxext \
+        libssl3 libcrypto3 ttf-dejavu font-liberation font-wqy-zenhei tzdata \
+    && cp /usr/share/zoneinfo/$TIMEZONE /etc/localtime \
+    && echo "$TIMEZONE" > /etc/TZ
+
+RUN apk add --no-cache --virtual .build-deps \
+        $PHPIZE_DEPS linux-headers libzip-dev libpng-dev icu-dev \
+        libpq-dev libxslt-dev freetype-dev sqlite-dev libjpeg-turbo-dev \
+        imagemagick-dev libtool \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j2 pdo_mysql pgsql pdo_pgsql mysqli gd exif intl xsl soap zip \
+    && if [ "$(php -r 'echo PHP_MAJOR_VERSION . PHP_MINOR_VERSION;')" -lt 85 ]; then docker-php-ext-install opcache; fi \
+    && pecl install imagick-3.8.1 redis-6.3.0 \
+    && docker-php-ext-enable imagick redis \
+    && docker-php-source delete \
+    && apk del .build-deps \
+    && rm -rf /tmp/pear \
+    && mkdir -p /var/www/app /var/www/html /run/nginx /var/log/supervisor /etc/supervisor/conf.d /etc/nginx/sites-available /etc/nginx/sites-enabled \
+    && npm install -g pm2 wscat http-server
+
+COPY --from=wkhtmltopdf /bin/wkhtmltopdf /bin/wkhtmltoimage /bin/libwkhtmltox* /bin/
+RUN mkdir -p /opt/wkhtmltox/bin \
+    && ln -s /bin/wkhtmltopdf /opt/wkhtmltox/bin/wkhtmltopdf \
+    && ln -s /bin/wkhtmltoimage /opt/wkhtmltox/bin/wkhtmltoimage \
+    && wkhtmltopdf --version \
+    && wkhtmltoimage --version
+
+COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
+COPY conf/supervisord.conf /etc/supervisord.conf
+COPY conf/nginx.conf /etc/nginx/nginx.conf
+COPY docker/start.sh /start.sh
+RUN sed -i 's/\r$//' /start.sh /etc/supervisord.conf /etc/nginx/nginx.conf \
+    && sed -i 's/nginx\.nginx/nginx:nginx/g' /start.sh \
+    && sed -i 's#--fpm-config /usr/local/etc/php-fpm.d/www.conf#--fpm-config /usr/local/etc/php-fpm.conf#' /etc/supervisord.conf \
+    && chmod 755 /start.sh \
+    && printf 'memory_limit = 128M\npost_max_size = 100M\nupload_max_filesize = 100M\n' > /usr/local/etc/php/conf.d/docker-vars.ini \
+    && sed -i 's/^user = www-data/user = nginx/; s/^group = www-data/group = nginx/' /usr/local/etc/php-fpm.d/www.conf \
+    && php -r 'foreach (["pdo_mysql", "pdo_sqlite", "pgsql", "pdo_pgsql", "mysqli", "gd", "exif", "intl", "xsl", "soap", "dom", "zip", "imagick", "redis", "Zend OPcache"] as $extension) { if (!extension_loaded($extension)) { throw new RuntimeException("Missing extension: " . $extension); } }' \
+    && php-fpm -t \
+    && nginx -t
+
+EXPOSE 80
+WORKDIR /var/www/html
+CMD ["/start.sh"]

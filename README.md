@@ -1,5 +1,23 @@
 ## ls-api
 
+### PHP 8.2–8.5 images
+
+GitHub Actions builds `linux/amd64` and `linux/arm64` images when a pushed commit message contains `ls-api`.
+Tags use the HKT build date and short PHP code: `lncknight/ls-api:YYYYMMDD-82` (not `php82` or `8.2.35`).
+
+| Code | PHP version |
+| --- | --- |
+| `82` | 8.2.35 |
+| `83` | 8.3.36 |
+| `84` | 8.4.27 |
+| `85` | 8.5.12 |
+
+All four builds share `ls-api/Dockerfile.php8`; the workflow pins each PHP base image by digest.
+Legacy PHP Dockerfiles and published tags remain unchanged. Application compatibility and production rollout require separate validation.
+
+Build PHP 8.5 locally with `docker build -f ls-api/Dockerfile.php8 -t ls-api:85 ls-api`.
+Keep the existing `/var/www/html` application mount, startup hooks and Nginx site configuration mounts.
+
 ### change log
 
 - 20220830 - add imagick & support php8
