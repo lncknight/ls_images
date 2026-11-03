@@ -15,6 +15,14 @@ Tags use the HKT build date and short PHP code: `lncknight/ls-api:YYYYMMDD-82` (
 All four builds share `ls-api/Dockerfile.php8`; the workflow pins each PHP base image by digest.
 Legacy PHP Dockerfiles and published tags remain unchanged. Application compatibility and production rollout require separate validation.
 
+### API PHP 8.3.36 rollout
+
+Build the shared image with the API-required `bcmath`, `mbstring` and `pcntl` extensions in addition to the existing database, XML, image and Redis extensions. Build-time extension assertions fail when a required module is absent; they do not establish application acceptance. Preserve the application and configuration mounts and the `/root/scripts` and `/root/post_boot_scripts` startup hooks.
+
+Use the revision-specific tag `lncknight/ls-api:8.3.36-<full-git-sha>` emitted by this workflow for deployment instead of reusing `20261022-83`, which API-local CI also builds from a different Debian-based Dockerfile. This shared image remains Alpine-based. The workflow also retains the existing HKT-date tags.
+
+Push an authorized commit containing `ls-api` in its message to trigger the existing multi-platform CI build; verify successful publication before updating API image references. Validate the resulting artifact on lsd3 (`ls-dev03.internal.lovestruck.com`) before production, including Composer platform requirements, web/FPM, queues, cron, PDF output and external integrations. The earlier API-local build and Composer-blocked dev pipeline do not validate this shared image. Build/publish and deployment are separate operations; deployment hosts must pull the selected artifact. Do not run Docker locally when working under the file-edit-only restriction.
+
 Build PHP 8.5 locally with `docker build -f ls-api/Dockerfile.php8 -t ls-api:85 ls-api`.
 Keep the existing `/var/www/html` application mount, startup hooks and Nginx site configuration mounts.
 
