@@ -19,6 +19,8 @@ Legacy PHP Dockerfiles and published tags remain unchanged. Application compatib
 
 Build the shared image with the API-required `bcmath`, `mbstring` and `pcntl` extensions in addition to the existing database, XML, image and Redis extensions. Build-time extension assertions fail when a required module is absent; they do not establish application acceptance. Preserve the application and configuration mounts and the `/root/scripts` and `/root/post_boot_scripts` startup hooks.
 
+Install dcron and expose its foreground daemon at `/usr/sbin/cron` for the API Supervisor configuration, while retaining `/usr/bin/crontab` for its post-boot hook.
+
 Use the revision-specific tag `lncknight/ls-api:8.3.36-<full-git-sha>` emitted by this workflow for deployment instead of reusing `20261022-83`, which API-local CI also builds from a different Debian-based Dockerfile. This shared image remains Alpine-based. The workflow also retains the existing HKT-date tags.
 
 Push an authorized commit containing `ls-api` in its message to trigger the existing multi-platform CI build; verify successful publication before updating API image references. Validate the resulting artifact on lsd3 (`ls-dev03.internal.lovestruck.com`) before production, including Composer platform requirements, web/FPM, queues, cron, PDF output and external integrations. The earlier API-local build and Composer-blocked dev pipeline do not validate this shared image. Build/publish and deployment are separate operations; deployment hosts must pull the selected artifact. Do not run Docker locally when working under the file-edit-only restriction.

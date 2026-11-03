@@ -5,13 +5,14 @@ FROM ${PHP_BASE}
 ENV TIMEZONE=Asia/Hong_Kong
 
 RUN apk add --no-cache \
-        bash openssh-client wget supervisor curl git ca-certificates dialog \
+        bash openssh-client wget supervisor curl git ca-certificates dialog dcron \
         imagemagick nodejs npm nginx rsync mysql-client python3 py3-pip unzip \
         libstdc++ freetds unixodbc libzip libpng icu-libs libpq libxslt oniguruma \
         freetype sqlite-libs libjpeg-turbo fontconfig libx11 libxrender libxext \
         libssl3 libcrypto3 ttf-dejavu font-liberation font-wqy-zenhei tzdata \
     && cp /usr/share/zoneinfo/$TIMEZONE /etc/localtime \
-    && echo "$TIMEZONE" > /etc/TZ
+    && echo "$TIMEZONE" > /etc/TZ \
+    && ln -s /usr/sbin/crond /usr/sbin/cron
 
 RUN apk add --no-cache --virtual .build-deps \
         $PHPIZE_DEPS linux-headers libzip-dev libpng-dev icu-dev \
@@ -47,6 +48,8 @@ RUN sed -i 's/\r$//' /start.sh /etc/supervisord.conf /etc/nginx/nginx.conf \
     && sed -i 's/^user = www-data/user = nginx/; s/^group = www-data/group = nginx/' /usr/local/etc/php-fpm.d/www.conf \
     && php -r 'foreach (["bcmath", "curl", "mbstring", "pcntl", "pdo_mysql", "pdo_sqlite", "pgsql", "pdo_pgsql", "mysqli", "gd", "exif", "intl", "xsl", "soap", "dom", "SimpleXML", "zip", "imagick", "redis", "Zend OPcache"] as $extension) { if (!extension_loaded($extension)) { throw new RuntimeException("Missing extension: " . $extension); } }' \
     && php-fpm -t \
+    && test -x /usr/sbin/cron \
+    && test -x /usr/bin/crontab \
     && nginx -t
 
 EXPOSE 80
