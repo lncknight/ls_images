@@ -201,7 +201,7 @@ jobs:
       #   uses: lhotari/action-upterm@v1
 
       - name: Build image
-        run: docker buildx build --file "$IMAGE_NAME/Dockerfile.php8" --build-arg PHP_BASE="${{ matrix.base }}" --platform linux/amd64,linux/arm64 "$IMAGE_NAME" --tag "lncknight/$IMAGE_NAME:$(TZ=Asia/Hong_Kong date +'%Y%m%d')-${{ matrix.version }}" --tag "lncknight/$IMAGE_NAME:${{ matrix.php }}-${GITHUB_SHA}" --push
+        run: docker buildx build --file "$IMAGE_NAME/Dockerfile.php8" --build-arg PHP_BASE="${{ matrix.base }}" --platform linux/amd64,linux/arm64 "$IMAGE_NAME" --tag "lncknight/$IMAGE_NAME:$(TZ=Asia/Hong_Kong date +'%Y%m%d')-${{ matrix.version }}" --push
 
   ls-service2:
     env:

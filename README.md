@@ -23,7 +23,7 @@ Install dcron and expose its foreground daemon at `/usr/sbin/cron` for the API S
 
 Remove the base image's `zz-docker.conf` listener override so the mounted API FPM pool can select `/var/run/php-fpm.sock`, matching the API Nginx configuration instead of being overridden to TCP port 9000.
 
-Use the revision-specific tag `lncknight/ls-api:8.3.36-<full-git-sha>` emitted by this workflow for deployment instead of reusing `20261022-83`, which API-local CI also builds from a different Debian-based Dockerfile. This shared image remains Alpine-based. The workflow also retains the existing HKT-date tags.
+Use HKT build-date and short PHP-code tags for deployment, for example `lncknight/ls-api:20261103-83` for PHP 8.3.36. Do not emit full-version/commit-SHA tags. Record the published digest as rollout evidence because a same-day rebuild can update the date tag. Do not overwrite shared-image tags from the API-local Debian Dockerfile; this shared image remains Alpine-based.
 
 Push an authorized commit containing `ls-api` in its message to trigger the existing multi-platform CI build; verify successful publication before updating API image references. Validate the resulting artifact on lsd3 (`ls-dev03.internal.lovestruck.com`) before production, including Composer platform requirements, web/FPM, queues, cron, PDF output and external integrations. The earlier API-local build and Composer-blocked dev pipeline do not validate this shared image. Build/publish and deployment are separate operations; deployment hosts must pull the selected artifact. Do not run Docker locally when working under the file-edit-only restriction.
 
