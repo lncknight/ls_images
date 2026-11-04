@@ -19,6 +19,8 @@ Legacy PHP Dockerfiles and published tags remain unchanged. Application compatib
 
 Build the shared image with the API-required `bcmath`, `mbstring` and `pcntl` extensions in addition to the existing database, XML, image and Redis extensions. Build-time extension assertions fail when a required module is absent; they do not establish application acceptance. Preserve the application and configuration mounts and the `/root/scripts` and `/root/post_boot_scripts` startup hooks.
 
+Preserve the production FTP extension alongside SOAP, XSL and PostgreSQL modules. Pay360 uses `SoapClient`; retain SOAP even though Composer does not declare it. Check these modules in the final image after removing build dependencies.
+
 Install dcron and expose its foreground daemon at `/usr/sbin/cron` for the API Supervisor configuration, while retaining `/usr/bin/crontab` for its post-boot hook.
 
 Remove the base image's `zz-docker.conf` listener override so the mounted API FPM pool can select `/var/run/php-fpm.sock`, matching the API Nginx configuration instead of being overridden to TCP port 9000.

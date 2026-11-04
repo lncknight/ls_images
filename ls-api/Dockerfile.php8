@@ -19,7 +19,7 @@ RUN apk add --no-cache --virtual .build-deps \
         libpq-dev libxslt-dev freetype-dev sqlite-dev libjpeg-turbo-dev \
         imagemagick-dev libtool oniguruma-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j2 bcmath mbstring pcntl pdo_mysql pgsql pdo_pgsql mysqli gd exif intl xsl soap zip \
+    && docker-php-ext-install -j2 bcmath ftp mbstring pcntl pdo_mysql pgsql pdo_pgsql mysqli gd exif intl xsl soap zip \
     && if [ "$(php -r 'echo PHP_MAJOR_VERSION . PHP_MINOR_VERSION;')" -lt 85 ]; then docker-php-ext-install opcache; fi \
     && pecl install imagick-3.8.1 redis-6.3.0 \
     && docker-php-ext-enable imagick redis \
@@ -47,7 +47,7 @@ RUN sed -i 's/\r$//' /start.sh /etc/supervisord.conf /etc/nginx/nginx.conf \
     && chmod 755 /start.sh \
     && printf 'memory_limit = 128M\npost_max_size = 100M\nupload_max_filesize = 100M\n' > /usr/local/etc/php/conf.d/docker-vars.ini \
     && sed -i 's/^user = www-data/user = nginx/; s/^group = www-data/group = nginx/' /usr/local/etc/php-fpm.d/www.conf \
-    && php -r 'foreach (["bcmath", "curl", "mbstring", "pcntl", "pdo_mysql", "pdo_sqlite", "pgsql", "pdo_pgsql", "mysqli", "gd", "exif", "intl", "xsl", "soap", "dom", "SimpleXML", "zip", "imagick", "redis", "Zend OPcache"] as $extension) { if (!extension_loaded($extension)) { throw new RuntimeException("Missing extension: " . $extension); } }' \
+    && php -r 'foreach (["bcmath", "ftp", "curl", "mbstring", "pcntl", "pdo_mysql", "pdo_sqlite", "pgsql", "pdo_pgsql", "mysqli", "gd", "exif", "intl", "xsl", "soap", "dom", "SimpleXML", "zip", "imagick", "redis", "Zend OPcache"] as $extension) { if (!extension_loaded($extension)) { throw new RuntimeException("Missing extension: " . $extension); } }' \
     && php-fpm -t \
     && test -x /usr/sbin/cron \
     && test -x /usr/bin/crontab \
