@@ -71,6 +71,9 @@ https://gitlab.com/ric_harvey/nginx-php-fpm
 ### change log
 
 ## nginx
+
+Build the shared Nginx image with ModSecurity and OWASP CRS in DetectionOnly mode. Use HKT date tags (`lncknight/nginx:YYYYMMDD`) and retain the published digest. Follow [Nginx configuration, tuning and verification](nginx/README.md) before rollout; mounted configurations require two explicit includes.
+
 - TODO - oauth, logrotate
 - 20230225 - certbot
   - chown -R nginx:nginx /var/log/nginx

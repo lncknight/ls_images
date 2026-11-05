@@ -60,7 +60,7 @@ jobs:
     env:
       IMAGE_NAME: 'nginx'
 
-    timeout-minutes: 10
+    timeout-minutes: 120
 
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && contains(github.event.head_commit.message, 'nginx')
@@ -97,7 +97,11 @@ jobs:
       #   uses: lhotari/action-upterm@v1
 
       - name: Build image
-        run: docker buildx build --platform linux/amd64,linux/arm64 $IMAGE_NAME --tag lncknight/$IMAGE_NAME:$(date +"%Y%m%d") --push
+        run: |
+          docker buildx build --platform linux/amd64,linux/arm64 "$IMAGE_NAME" \
+            --tag "lncknight/$IMAGE_NAME:$(TZ=Asia/Hong_Kong date +'%Y%m%d')" \
+            --metadata-file /tmp/nginx-build.json --push
+          cat /tmp/nginx-build.json >> "$GITHUB_STEP_SUMMARY"
   
   sonar-cli:
     env:
