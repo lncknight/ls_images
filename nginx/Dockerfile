@@ -1,4 +1,4 @@
-FROM nginx:1.30.6-alpine@sha256:0e52bd054126cdc040b1276c0af347aeb02a41b9cfe305d6094767ac30e97949 AS base
+FROM nginx:1.31.9-alpine@sha256:90b6bd2aec278b16b98221d64deb1d6d35d164567f507ab0716e6053878315aa AS base
 
 FROM base AS build
 
@@ -26,7 +26,7 @@ RUN set -eux; \
     mkdir connector; \
     tar -xzf connector.tar.gz --strip-components=1 -C connector; \
     curl -fsSL "https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz" -o nginx.tar.gz; \
-    echo '3cf46f5ed7504d460125866b7bea99fb357f31d887e2e63b35503310e9b8b6c8  nginx.tar.gz' | sha256sum -c -; \
+    echo 'a11c5eeee2e257f4478f0e649f84b0040787d277d2d3e5233952aa6b6dcb80ad  nginx.tar.gz' | sha256sum -c -; \
     mkdir nginx; \
     tar -xzf nginx.tar.gz --strip-components=1 -C nginx; \
     cd nginx; \
