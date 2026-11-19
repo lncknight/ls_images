@@ -6,13 +6,23 @@ ENV TIMEZONE=Asia/Hong_Kong
 
 RUN apk add --no-cache \
         bash openssh-client wget supervisor curl git ca-certificates dialog dcron \
-        imagemagick nodejs npm nginx rsync mysql-client python3 py3-pip unzip \
+        imagemagick nodejs npm rsync mysql-client python3 py3-pip unzip \
         libstdc++ freetds unixodbc libzip libpng icu-libs libpq libxslt oniguruma \
         freetype sqlite-libs libjpeg-turbo fontconfig libx11 libxrender libxext \
         libssl3 libcrypto3 ttf-dejavu font-liberation font-wqy-zenhei tzdata \
     && cp /usr/share/zoneinfo/$TIMEZONE /etc/localtime \
     && echo "$TIMEZONE" > /etc/TZ \
     && ln -s /usr/sbin/crond /usr/sbin/cron
+
+# Install the signed mainline APK matching the PHP base's Alpine release.
+RUN alpine_branch="$(cut -d. -f1,2 /etc/alpine-release)" \
+    && nginx_package="nginx-1.31.9-r1.apk" \
+    && curl -fsSLo /tmp/nginx_signing.rsa.pub https://nginx.org/keys/nginx_signing.rsa.pub \
+    && echo 'e09fa32f0a0eab2b879ccbbc4d0e4fb9751486eedda75e35fac65802cc9faa266425edf83e261137a2f4d16281ce2c1a5f4502930fe75154723da014214f0655  /tmp/nginx_signing.rsa.pub' | sha512sum -c - \
+    && mv /tmp/nginx_signing.rsa.pub /etc/apk/keys/ \
+    && curl -fsSLo "/tmp/$nginx_package" "https://nginx.org/packages/mainline/alpine/v$alpine_branch/main/$(apk --print-arch)/$nginx_package" \
+    && apk add --no-cache "/tmp/$nginx_package" \
+    && rm "/tmp/$nginx_package"
 
 RUN apk add --no-cache --virtual .build-deps \
         $PHPIZE_DEPS linux-headers libzip-dev libpng-dev icu-dev \
